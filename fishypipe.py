@@ -5,9 +5,16 @@
 import subprocess
 import sys, getopt
 
+def fastq_to_html(arg):
+    html_arg = arg + ".html"
+
+    return html_arg
+
+
+
 def main(argv):
     opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
-
+    fastq_html = fastq_to_html(args[1])
     # The .html files are just a way to see if the sequences are of good quality.
     # The .html files are not used for any additional analyses.
     # FIXED: hardcode issue (python3 fishypipe.py ../FastQC/fastqc ../rockfish_data/S_ciliatus_1003050_R1.fastq)
@@ -15,8 +22,7 @@ def main(argv):
 
     # NOTE: I'm thinking we create an option to show the quality via html and then
     # the user can choose to continue or not
-
-    subprocess.run(["open", "../rockfish_data/S_ciliatus_1003050_R1.html"])
+    subprocess.run(["open", fastq_html])
 
     # piping example
     # ps = subprocess.Popen(('ps', '-A'), stdout=subprocess.PIPE)

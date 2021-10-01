@@ -6,8 +6,10 @@ import subprocess
 import sys, getopt
 
 def fastq_to_html(arg):
-    html_arg = arg + ".html"
-
+    num = arg.rfind('.')
+    temp = arg[0 : num]
+    html_arg = temp + "_fastqc.html"
+    
     return html_arg
 
 
@@ -15,6 +17,7 @@ def fastq_to_html(arg):
 def main(argv):
     opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
     fastq_html = fastq_to_html(args[1])
+    subprocess.run(["open", fastq_html])
     # The .html files are just a way to see if the sequences are of good quality.
     # The .html files are not used for any additional analyses.
     # FIXED: hardcode issue (python3 fishypipe.py ../FastQC/fastqc ../rockfish_data/S_ciliatus_1003050_R1.fastq)

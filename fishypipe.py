@@ -51,14 +51,18 @@ def run_trimgalore(file, continue_option):
     #trimmed_file_name = fastq_to_trimmed(args[0])
     # print("\nRun fastqc? Trim_galore will run no matter what.")
     # continue_option = continue_or_not()
+    clean_file = clean_file_name(file)
+    trimmed_file_name = fastq_to_trimmed(clean_file)
+    location_of_trimmed_file = "./trimgalore_output_folder/" + trimmed_file_name
+
     if continue_option == 0:
         print("\n===== RUNNING FASTQC =====\n")
         # TODO: add clean file function here, also- figure out how to use the trimgalore outputted files
-        trimmed_file_name = fastq_to_trimmed(file)
-        location_of_trimmed_file = "./trimgalore_output_folder/" + trimmed_file_name
+        # looks like it is just the trimmed stored in the folder
+
         subprocess.run(["fastqc", location_of_trimmed_file])
 
-    return
+    return location_of_trimmed_file
 
 
 def run_trinity(seqType, max_memory, left_file, right_file):
@@ -75,14 +79,15 @@ def main(argv):
     print("\nRun fastqc? (currently required) Trim_galore will run no matter what.")
     continue_option = continue_or_not()
 
-    run_trimgalore(args[0], continue_option)
-    run_trimgalore(args[1], continue_option)
+    left_file_loc = run_trimgalore(args[0], continue_option)
+    right_file_loc = run_trimgalore(args[1], continue_option)
 
 
     print("Files prepped for Trinity, would you like to continue?")
     continue_option = continue_or_not()
     if continue_option < 0:
-        quit()
+        # hard coding some in to see if we can get this to work
+        run_trinity("fq", "5G", left_file_loc, right_file_loc)
 
 
 

@@ -43,27 +43,39 @@ def continue_or_not():
          return continue_or_not()
 
 
-def main(argv):
-    opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
-    file_name = clean_file_name(args[0])
-
+def run_trimgalore(file, continue_option):
     # continuing with program, on to trimgalore
     print("\n===== RUNNING TRIMGALORE =====\n")
 
-    fastqc_process = subprocess.run(["trim_galore", args[0], "-o", "trimgalore_output_folder"])
+    fastqc_process = subprocess.run(["trim_galore", file, "-o", "trimgalore_output_folder"])
 
     #trimmed_file_name = fastq_to_trimmed(args[0])
-    print("\nRun fastqc? Trim_galore will run no matter what.")
-    continue_option = continue_or_not()
+    # print("\nRun fastqc? Trim_galore will run no matter what.")
+    # continue_option = continue_or_not()
     if continue_option == 0:
+        print("\n===== RUNNING FASTQC =====\n")
         trimmed_file_name = fastq_to_trimmed(file_name)
         location_of_trimmed_file = "./trimgalore_output_folder/" + trimmed_file_name
         fastqc_process = subprocess.run(["fastqc", location_of_trimmed_file])
 
-        print("FastQC finished, would you like to continue?")
-        continue_option = continue_or_not()
-        if continue_option < 0:
-            quit()
+    return
+
+
+def main(argv):
+    opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
+    file_name = clean_file_name(args[0])
+
+    print("\nRun fastqc? Trim_galore will run no matter what.")
+    continue_option = continue_or_not()
+
+    run_trimgalore(args[0], continue_option)
+    run_trimgalore(args[1], continue_option)
+
+
+    print("Files prepped for Trinity, would you like to continue?")
+    continue_option = continue_or_not()
+    if continue_option < 0:
+        quit()
 
 
 

@@ -46,17 +46,24 @@ def continue_or_not():
 def run_trimgalore(file, continue_option):
     # continuing with program, on to trimgalore
     print("\n===== RUNNING TRIMGALORE =====\n")
-
-    fastqc_process = subprocess.run(["trim_galore", file, "-o", "trimgalore_output_folder"])
+    subprocess.run(["trim_galore", file, "-o", "trimgalore_output_folder"])
 
     #trimmed_file_name = fastq_to_trimmed(args[0])
     # print("\nRun fastqc? Trim_galore will run no matter what.")
     # continue_option = continue_or_not()
     if continue_option == 0:
         print("\n===== RUNNING FASTQC =====\n")
+        # TODO: add clean file function here, also- figure out how to use the trimgalore outputted files
         trimmed_file_name = fastq_to_trimmed(file)
         location_of_trimmed_file = "./trimgalore_output_folder/" + trimmed_file_name
-        fastqc_process = subprocess.run(["fastqc", location_of_trimmed_file])
+        subprocess.run(["fastqc", location_of_trimmed_file])
+
+    return
+
+
+def run_trinity(seqType, max_memory, left_file, right_file):
+    # Trinity --seqType [fa|fq] --max_memory <maximum_memory> --left input_reads_pair_1.[fa|fq] --right input_reads_pair_2.[fa|fq] [options]
+    subprocess.run(["Trinity", "--seqType", seqType, "--max_memory", max_memory, "--left", left_file, "--right", right_file])
 
     return
 
@@ -65,7 +72,7 @@ def main(argv):
     opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
     file_name = clean_file_name(args[0])
 
-    print("\nRun fastqc? Trim_galore will run no matter what.")
+    print("\nRun fastqc? (currently required) Trim_galore will run no matter what.")
     continue_option = continue_or_not()
 
     run_trimgalore(args[0], continue_option)

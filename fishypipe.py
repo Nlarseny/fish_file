@@ -54,7 +54,7 @@ def run_trimgalore(file, continue_option):
     # continue_option = continue_or_not()
     if continue_option == 0:
         print("\n===== RUNNING FASTQC =====\n")
-        trimmed_file_name = fastq_to_trimmed(file_name)
+        trimmed_file_name = fastq_to_trimmed(file)
         location_of_trimmed_file = "./trimgalore_output_folder/" + trimmed_file_name
         fastqc_process = subprocess.run(["fastqc", location_of_trimmed_file])
 

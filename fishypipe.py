@@ -72,6 +72,13 @@ def run_trinity(seqType, max_memory, left_file, right_file):
     return
 
 
+def run_bwa(reference, left, right, sam_file):
+    subprocess.run(["bwa", "index", reference])
+
+    # bwa mem reference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq > test_1_bwa.sam
+    subprocess.run(["bwa", "index", reference, left, right, ">", sam_file])
+
+
 def main(argv):
     opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
     file_name = clean_file_name(args[0])
@@ -79,15 +86,15 @@ def main(argv):
     print("\nRun fastqc? (currently required) Trim_galore will run no matter what.")
     continue_option = continue_or_not()
 
-    left_file_loc = run_trimgalore(args[0], continue_option)
-    right_file_loc = run_trimgalore(args[1], continue_option)
+    # left_file_loc = run_trimgalore(args[0], continue_option)
+    # right_file_loc = run_trimgalore(args[1], continue_option)
 
 
     print("Files prepped for Trinity, would you like to continue?")
     continue_option = continue_or_not()
     if continue_option < 0:
         # hard coding some in to see if we can get this to work
-        run_trinity("fq", "5G", left_file_loc, right_file_loc)
+        # run_trinity("fq", "5G", left_file_loc, right_file_loc)
 
 
 
@@ -96,15 +103,25 @@ def main(argv):
 
     # Trinity --seqType fq --left reads_1.fq --right reads_2.fq --CPU 6 --max_memory 20G
     # Trinity --seqType [fa|fq] --max_memory <maximum_memory> --left input_reads_pair_1.[fa|fq] --right input_reads_pair_2.[fa|fq] [options]
-    # Trinity --seqType fq --max_memory 5G --left input_reads_pair_1.fq --right input_reads_pair_2.fq [options]
+    # Trinity --seqType fq --max_memory 10G --left input_reads_pair_1.fq --right input_reads_pair_2.fq [options]
 
-
+    # trinity_out_dir/Trinity.fasta is where the output is located
 
 
     # piping example
     # ps = subprocess.Popen(('ps', '-A'), stdout=subprocess.PIPE)
     # output = subprocess.check_output(('grep', 'process_name'), stdin=ps.stdout)
     # ps.wait()
+
+
+
+
+    # BWA
+    # bwa index reference.fasta (you have to run this with the reference initially)
+    # bwa mem reference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq > test_1_bwa.sam
+    run_bwa(reference, left, right, sam_file)
+
+
 
     print("\n\n===== 100% complete =====")
 

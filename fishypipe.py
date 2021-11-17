@@ -72,27 +72,42 @@ def run_trinity(seqType, max_memory, left_file, right_file):
     return
 
 
-def run_bwa(reference, left, right, sam_file):
-    subprocess.run(["bwa", "index", reference])
+def run_bwa(reference, left, right, bam_file):
+    subprocess.run(["bwa", "index", reference], shell=False)
 
     # bwa mem reference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq > test_1_bwa.sam
-    subprocess.run(["bwa", "index", reference, left, right, ">", sam_file])
+    #program_name = "bwa"
+    #arguments = ["mem", "reference.fasta", "../rockfish_data/S_ciliatus_1003050_R1.fastq", "../rockfish_data/S_ciliatus_1003050_R2.fastq", ">", "../rockfish_data/test_1_bwa.sam"]
+    #command = [program_name]
+    #command.extend(arguments)
+    #subprocess.run(command)
+    with open(bam_file, "w") as outfile:
+        # subprocess.run(my_cmd, stdout=outfile)
+        # to get bam instead -> bwa mem greference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq | samtools sort -o output.bam -
+        bwa = subprocess.run(["bwa", "mem", reference, left, right], shell=False, stdout=subprocess.PIPE)
+        output = subprocess.run(['samtools', 'sort'], stdin=bwa.stdout, stdout=outfile)
+
+
+def run_HaplotypeCaller(bam_file, vcf_file, reference):
+    # NOTE: the -hets may need to be adjusted to something like 0.015 since this is not from a human
+    subprocess.run(["./gatk", "HaplotypeCaller", "-R", reference, "-I", bam_file, "-ERC", "GVCF", "-O", vcf_file], shell=False)
+    x = 0
 
 
 def main(argv):
     opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
-    file_name = clean_file_name(args[0])
+    # file_name = clean_file_name(args[0])
 
-    print("\nRun fastqc? (currently required) Trim_galore will run no matter what.")
-    continue_option = continue_or_not()
+    # print("\nRun fastqc? (currently required) Trim_galore will run no matter what.")
+    # continue_option = continue_or_not()
 
     # left_file_loc = run_trimgalore(args[0], continue_option)
     # right_file_loc = run_trimgalore(args[1], continue_option)
 
 
-    print("Files prepped for Trinity, would you like to continue?")
-    continue_option = continue_or_not()
-    if continue_option < 0:
+    # print("Files prepped for Trinity, would you like to continue?")
+    # continue_option = continue_or_not()
+    # if continue_option < 0:
         # hard coding some in to see if we can get this to work
         # run_trinity("fq", "5G", left_file_loc, right_file_loc)
 
@@ -114,13 +129,24 @@ def main(argv):
     # ps.wait()
 
 
-
-
     # BWA
     # bwa index reference.fasta (you have to run this with the reference initially)
     # bwa mem reference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq > test_1_bwa.sam
-    run_bwa(reference, left, right, sam_file)
+    # to get bam instead -> bwa mem greference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq | samtools sort -o output.bam -
+    reference = args[0]
+    left = args[1]
+    right = args[2]
+    bam_file = args[3]
 
+    # python3 fishypipe.py ../rockfish_data/reference.fasta ../rockfish_data/S_ciliatus_1003050_R1.fastq ../rockfish_data/S_ciliatus_1003050_R2.fastq ../rockfish_data/bwa_bigtest_1.bam
+    run_bwa(reference, left, right, bam_file)
+
+    # we get SAM files from running bwa, convert to bam
+    # example: picard SortSam -INPUT aligned_reads.sam or samtools view -S -b sample.sam > sample.bam
+
+    # VariantAnnotator is next?
+    # No, I'm thinking HaplotypeCaller is next. It takes a BAM file and gives us a VCF file
+    #run_HaplotypeCaller()
 
 
     print("\n\n===== 100% complete =====")

@@ -96,6 +96,10 @@ def run_HaplotypeCaller(bam_file, vcf_file, reference):
 
 def main(argv):
     opts, args = getopt.getopt(argv, "hi:o:",["ifile=","ofile="])
+    if len(args) < 5:
+        print("You do not have enough arguments.")
+        print("Please make sure you have your arguments in this order: reference, left_DNA_name, right_DNA_name, bam_file_name, vfc_file_name")
+        return
     # file_name = clean_file_name(args[0])
 
     # print("\nRun fastqc? (currently required) Trim_galore will run no matter what.")
@@ -133,11 +137,12 @@ def main(argv):
     # bwa index reference.fasta (you have to run this with the reference initially)
     # bwa mem reference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq > test_1_bwa.sam
     # to get bam instead -> bwa mem greference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq | samtools sort -o output.bam -
+
     reference = args[0]
     left = args[1]
     right = args[2]
     bam_file = args[3]
-
+    vcf_file = args[4]
     # python3 fishypipe.py ../rockfish_data/reference.fasta ../rockfish_data/S_ciliatus_1003050_R1.fastq ../rockfish_data/S_ciliatus_1003050_R2.fastq ../rockfish_data/bwa_bigtest_1.bam
     run_bwa(reference, left, right, bam_file)
 
@@ -146,7 +151,7 @@ def main(argv):
 
     # VariantAnnotator is next?
     # No, I'm thinking HaplotypeCaller is next. It takes a BAM file and gives us a VCF file
-    #run_HaplotypeCaller()
+    run_HaplotypeCaller(bam_file, vcf_file, reference)
 
 
     print("\n\n===== 100% complete =====")

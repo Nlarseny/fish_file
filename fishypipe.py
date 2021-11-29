@@ -81,17 +81,19 @@ def run_bwa(reference, left, right, bam_file):
     #command = [program_name]
     #command.extend(arguments)
     #subprocess.run(command)
+
+
     with open(bam_file, "w") as outfile:
         # subprocess.run(my_cmd, stdout=outfile)
         # to get bam instead -> bwa mem greference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq | samtools sort -o output.bam -
         bwa = subprocess.run(["bwa", "mem", reference, left, right], shell=False, stdout=subprocess.PIPE)
-        output = subprocess.run(['samtools', 'sort'], stdin=bwa.stdout, stdout=outfile)
+        output = subprocess.run(['samtools', 'sort', "-o"], stdin=bwa.stdout, stdout=outfile)
 
 
 def run_HaplotypeCaller(bam_file, vcf_file, reference):
+    open(vcf_file, "w")
     # NOTE: the -hets may need to be adjusted to something like 0.015 since this is not from a human
-    subprocess.run(["./gatk", "HaplotypeCaller", "-R", reference, "-I", bam_file, "-ERC", "GVCF", "-O", vcf_file], shell=False)
-    x = 0
+    subprocess.run(["../gatk-4.2.3.0/gatk", "HaplotypeCaller", "-R", reference, "-I", bam_file, "-ERC", "GVCF", "-O", vcf_file], shell=False)
 
 
 def main(argv):
@@ -143,7 +145,7 @@ def main(argv):
     right = args[2]
     bam_file = args[3]
     vcf_file = args[4]
-    # python3 fishypipe.py ../rockfish_data/reference.fasta ../rockfish_data/S_ciliatus_1003050_R1.fastq ../rockfish_data/S_ciliatus_1003050_R2.fastq ../rockfish_data/bwa_bigtest_1.bam
+    # python3 fishypipe.py ../rockfish_data/GCF_015220745.1_fSebUmb1.pri_genomic.fna ../rockfish_data/S_ciliatus_1003050_R1.fastq ../rockfish_data/S_ciliatus_1003050_R2.fastq ../rockfish_data/bwa_bigtest_2.bam test_2.vcf
     run_bwa(reference, left, right, bam_file)
 
     # we get SAM files from running bwa, convert to bam

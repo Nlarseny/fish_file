@@ -83,11 +83,13 @@ def run_bwa(reference, left, right, bam_file):
     #subprocess.run(command)
 
 
-    with open(bam_file, "w") as outfile:
+    with open("bam_file_in_the_making.sam", "w") as outfile:
         # subprocess.run(my_cmd, stdout=outfile)
         # to get bam instead -> bwa mem greference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq | samtools sort -o output.bam -
-        bwa = subprocess.run(["bwa", "mem", reference, left, right], shell=False, stdout=subprocess.PIPE)
-        output = subprocess.run(['samtools', 'sort', "-o"], stdin=bwa.stdout, stdout=outfile)
+        bwa = subprocess.run(["bwa", "mem", reference, left, right], shell=False, stdout=outfile)
+
+    output = subprocess.run(['samtools', 'sort', "bam_file_in_the_making.sam", "-o", bam_file])
+
 
 
 def run_HaplotypeCaller(bam_file, vcf_file, reference):

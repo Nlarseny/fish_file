@@ -95,7 +95,7 @@ def run_bwa(reference, left, right, bam_file):
 def run_HaplotypeCaller(bam_file, vcf_file, reference):
     open(vcf_file, "w")
     # NOTE: the -hets may need to be adjusted to something like 0.015 since this is not from a human
-    subprocess.run(["../gatk-4.2.3.0/gatk", "HaplotypeCaller", "-R", reference, "-I", bam_file, "-ERC", "GVCF", "-O", vcf_file], shell=False)
+    subprocess.run(["../../gatk-4.2.3.0/gatk", "HaplotypeCaller", "-R", reference, "-I", bam_file, "-ERC", "GVCF", "-O", vcf_file], shell=False)
 
 
 def main(argv):

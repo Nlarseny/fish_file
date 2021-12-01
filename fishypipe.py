@@ -73,7 +73,7 @@ def run_trinity(seqType, max_memory, left_file, right_file):
 
 
 def run_bwa(reference, left, right, bam_file):
-    subprocess.run(["bwa", "index", reference], shell=False)
+    subprocess.run(["bwa", "index", reference], shell=False) #TODO: only index once
 
     # bwa mem reference.fasta S_ciliatus_1003050_R1.fastq S_ciliatus_1003050_R2.fastq > test_1_bwa.sam
     #program_name = "bwa"

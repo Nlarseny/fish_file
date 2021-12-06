@@ -93,6 +93,8 @@ def run_bwa(reference, left, right, bam_file):
 
 
 def run_HaplotypeCaller(bam_file, vcf_file, reference):
+    # gatk-launch CreateSequenceDictionary -R ref.fasta
+    subprocess.run(["./gatk-4.2.3.0/gatk", "CreateSequenceDictionary", "-R", reference], shell=False)
     # samtools faidx ref.fasta 
     subprocess.run(["samtools", "faidx", reference], shell=False)
 
@@ -151,7 +153,8 @@ def main(argv):
     bam_file = args[3]
     vcf_file = args[4]
     # python3 fishypipe.py ../rockfish_data/GCF_015220745.1_fSebUmb1.pri_genomic.fna ../rockfish_data/S_ciliatus_1003050_R1.fastq ../rockfish_data/S_ciliatus_1003050_R2.fastq ../rockfish_data/bwa_bigtest_2.bam test_2.vcf
-    run_bwa(reference, left, right, bam_file)
+    
+    # run_bwa(reference, left, right, bam_file)
 
     # we get SAM files from running bwa, convert to bam
     # example: picard SortSam -INPUT aligned_reads.sam or samtools view -S -b sample.sam > sample.bam
